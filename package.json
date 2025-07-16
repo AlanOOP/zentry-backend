@@ -1,0 +1,19 @@
+{
+  "name": "server-zentry",
+  "version": "1.0.0",
+  "description": "first project express and typescript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "TypeScript",
+    "Node",
+    "Express"
+  ],
+  "author": "Alan Alexis Hernandez Francisco",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
