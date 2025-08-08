@@ -1,0 +1,13 @@
+import { CorsOptions } from "cors";
+
+export const corsOptions: CorsOptions = {
+    origin: function (origin, callback) {
+        // Permitir solicitudes desde el frontend
+        if (!origin || origin === process.env.FRONTEND_URL) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    }
+};
+
