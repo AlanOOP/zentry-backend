@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import slug from "slug";
 import User, { IUser } from "../models/User";
-import { hashPassword } from "../utils/auth";
+import { hashPassword, checkPassword } from "../utils/auth";
 import { validationResult } from "express-validator";
 
 export class UserController {
@@ -9,11 +9,6 @@ export class UserController {
     try {
       const { handle, name, email, password }: IUser = req.body;
 
-      // Validate request body
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
 
       const exist = await User.findOne({ email });
       const existHandle = await User.findOne({ handle });
@@ -30,11 +25,33 @@ export class UserController {
       user.password = hashedPassword;
       await user.save();
 
-      return res.status(201).json({
-        message: "Usuario registrado correctamente",
-      });
+      return res.status(201).json({ message: "Usuario registrado correctamente" });
     } catch (error) {
       console.error("Error al registrar el usuario:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  static async login(req: Request, res: Response): Promise<Response> {
+    try {
+      const { email, password } = req.body;
+
+
+      const user = await User.findOne({ email });
+      if (!user) {
+        const error = new Error("Usuario no encontrado");
+        return res.status(404).json({ error: error.message });
+      }
+
+      const isMatch = await checkPassword(password, user.password);
+      if (!isMatch) {
+        const error = new Error("Contraseña incorrecta");
+        return res.status(401).json({ error: error.message });
+      }
+
+      return res.status(200).json({ message: "Login exitoso" });
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
       return res.status(500).json({ error: "Internal server error" });
     }
   }

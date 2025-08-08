@@ -2,6 +2,8 @@ import express from "express";
 import "dotenv/config";
 import router from "./router";
 import { connectDB } from "./config/db";
+import cors from "cors";
+import { corsOptions } from "./config/cors";
 
 const app = express();
 
@@ -9,6 +11,8 @@ const app = express();
 app.use(express.json());
 
 connectDB();
+
+app.use(cors(corsOptions));
 
 router.get("/", (req, res) => {
   res.send("Hola");
