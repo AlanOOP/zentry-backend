@@ -1,8 +1,9 @@
 import type { Request, Response } from "express";
 import slug from "slug";
+import jwt from "jsonwebtoken";
 import User, { IUser } from "../models/User";
 import { hashPassword, checkPassword } from "../utils/auth";
-import { validationResult } from "express-validator";
+import { generateJWT } from "../utils/jwt";
 
 export class UserController {
   static async register(req: Request, res: Response): Promise<Response> {
@@ -49,10 +50,17 @@ export class UserController {
         return res.status(401).json({ error: error.message });
       }
 
-      return res.status(200).json({ message: "Login exitoso" });
+      const token = generateJWT({ id: user._id, email: user.email });
+
+      return res.status(200).json({ token });
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       return res.status(500).json({ error: "Internal server error" });
     }
+  }
+
+  static async getUserProfile(req: Request, res: Response): Promise<Response> {
+    req.user = req.user as IUser;
+    return res.status(200).json(req.user);
   }
 }
