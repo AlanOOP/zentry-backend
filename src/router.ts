@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { body } from "express-validator";
 import { UserController } from "./controllers/userController";
 import { handleInputErrors } from "./middleware/validation";
+import { authenticate } from "./middleware/auth";
 
 const router = Router();
 
@@ -23,6 +24,11 @@ router.post(
     body("password").notEmpty().withMessage("La contraseña es obligatoria"),
     handleInputErrors,
     UserController.login
+);
+
+router.get(
+    "/auth/profile", authenticate,
+    UserController.getUserProfile
 );
 
 export default router;

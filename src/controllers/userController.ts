@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import slug from "slug";
+import jwt from "jsonwebtoken";
 import User, { IUser } from "../models/User";
 import { hashPassword, checkPassword } from "../utils/auth";
 import { generateJWT } from "../utils/jwt";
@@ -56,5 +57,10 @@ export class UserController {
       console.error("Error al iniciar sesión:", error);
       return res.status(500).json({ error: "Internal server error" });
     }
+  }
+
+  static async getUserProfile(req: Request, res: Response): Promise<Response> {
+    req.user = req.user as IUser;
+    return res.status(200).json(req.user);
   }
 }
