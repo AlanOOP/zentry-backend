@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken';
 import User, { IUser } from '../models/User';
 
 //interface type 
-
 declare global {
     namespace Express {
         interface Request {
@@ -11,7 +10,6 @@ declare global {
         }
     }
 }
-
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
     const bearer = req.headers.authorization;
@@ -41,8 +39,6 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
             req.user = user;
             next();
         }
-
-        return res.status(401).json({ error: "No Autorizado" });
 
     } catch (error) {
         console.error("Error al obtener el perfil del usuario:", error);

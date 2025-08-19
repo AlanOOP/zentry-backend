@@ -3,6 +3,7 @@ import { body } from "express-validator";
 import { UserController } from "./controllers/userController";
 import { handleInputErrors } from "./middleware/validation";
 import { authenticate } from "./middleware/auth";
+import { upload } from "./lib/multer";
 
 const router = Router();
 
@@ -29,6 +30,24 @@ router.post(
 router.get(
     "/auth/profile", authenticate,
     UserController.getUserProfile
+);
+
+// modificar handle y description
+router.put(
+    "/auth/profile",
+    authenticate,
+    body("handle").notEmpty().withMessage("El handle es obligatorio"),
+    body("description").notEmpty().withMessage("La descripción es obligatoria"),
+    handleInputErrors,
+    authenticate,
+    UserController.updateUserProfile
+);
+
+router.patch(
+    "/auth/profile/image",
+    authenticate,
+    upload.single("image"),
+    UserController.updateUserAvatar
 );
 
 export default router;

@@ -63,4 +63,50 @@ export class UserController {
     req.user = req.user as IUser;
     return res.status(200).json(req.user);
   }
+
+  static async updateUserProfile(req: Request, res: Response): Promise<Response> {
+    try {
+      const { handle, description } = req.body;
+      const user  : IUser = req.user!;
+
+      const newHandle = slug(handle, "");
+
+      const userExistHandle : IUser | null = await User.findOne({ handle: newHandle });
+
+      if (userExistHandle && userExistHandle.email !== user.email) {
+        const error = new Error("El handle ya está en uso");
+        return res.status(409).json({ error: error.message });
+      }
+
+      user.handle = newHandle;
+      user.description = description;
+
+      await user.save();
+
+      return res.status(200).json({ message: "Perfil actualizado correctamente" });
+    } catch (error) {
+      console.error("Error al actualizar el perfil:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  static async updateUserAvatar(req: Request, res: Response): Promise<Response> {
+    try {
+      const user: IUser = req.user!;
+      const file = req.file;
+
+      if (!file) {
+        const error = new Error("No se ha subido ninguna imagen");
+        return res.status(400).json({ error: error.message });
+      }
+
+      user.avatar = file.filename;
+      await user.save();
+
+      return res.status(200).json({ message: "Avatar actualizado correctamente" });
+    } catch (error) {
+      console.error("Error al actualizar el avatar:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
 }
