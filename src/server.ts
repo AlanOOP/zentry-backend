@@ -9,6 +9,10 @@ const app = express();
 
 //habilitar el body parser para recibir datos en formato JSON
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+//static folder uploadas
+app.use("/uploads", express.static("uploads"));
 
 connectDB();
 

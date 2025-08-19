@@ -6,6 +6,7 @@ export interface IUser extends Document {
   password: string;
   handle: string;
   description:string;
+  avatar: string;
 }
 
 const userSchema = new Schema(
@@ -37,14 +38,17 @@ const userSchema = new Schema(
       type: String,
       required: false,
       trim: true,
-    }
+    },
+    avatar: {
+      type: String,
+      required: false,
+      trim: true,
+    },
   },
   {
     timestamps: true,
   }
 );
-
-
 
 const User = model<IUser>("User", userSchema);
 
